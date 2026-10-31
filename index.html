@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Iniciar Talento</title>
+<style>
+  *{box-sizing:border-box;margin:0}
+  html,body{height:100%;overflow:hidden;font-family:"Comic Sans MS","Trebuchet MS",sans-serif}
+  body{background:linear-gradient(#8fd3ff,#e8f7ff 70%)}
+  #ground{position:absolute;left:0;right:0;bottom:0;height:22%;z-index:1;background:repeating-linear-gradient(90deg,#6bbf59 0 60px,#63b552 60px 120px);border-top:6px solid #4a9a3b}
+  #park{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+  #sun{position:absolute;top:5%;right:8%;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,#fffbc2 0,#ffe45c 60%,#ffc928 100%);box-shadow:0 0 50px 25px rgba(255,225,90,.6);animation:glow 3s infinite alternate}
+  #sun::before{content:"";position:absolute;inset:-45px;border-radius:50%;background:repeating-conic-gradient(rgba(255,230,100,.55) 0 6deg,transparent 6deg 20deg);-webkit-mask:radial-gradient(circle,transparent 38%,#000 40%,#000 70%,transparent 72%);mask:radial-gradient(circle,transparent 38%,#000 40%,#000 70%,transparent 72%);animation:spin 40s linear infinite}
+  @keyframes glow{to{box-shadow:0 0 70px 38px rgba(255,225,90,.7)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .cloud{position:absolute;height:34px;background:#fff;border-radius:40px;opacity:.95;animation:drift linear infinite}
+  .cloud::before,.cloud::after{content:"";position:absolute;background:#fff;border-radius:50%}
+  .cloud::before{width:46px;height:46px;left:14px;top:-22px}
+  .cloud::after{width:34px;height:34px;right:16px;top:-14px}
+  @keyframes drift{from{transform:translateX(-250px)}to{transform:translateX(calc(100vw + 250px))}}
+  .hill{position:absolute;bottom:20%;border-radius:50% 50% 0 0}
+  .tree{position:absolute;bottom:20%;transform-origin:bottom center}
+  .tree svg{width:100%;height:100%;display:block}
+  .bush{position:absolute;bottom:19%}
+  .path{position:absolute;left:0;right:0;bottom:3%;height:11%;background:#e8d5a3;border-top:3px solid #d2bb85;border-bottom:3px solid #d2bb85;clip-path:polygon(0 0,100% 12%,100% 100%,0 88%)}
+  .flower{position:absolute;width:8px;height:8px;border-radius:50%;box-shadow:0 0 0 3px rgba(255,255,255,.7)}
+  #start{position:absolute;inset:0;margin:auto;width:min(80vw,700px);height:min(40vh,260px);
+    font-size:clamp(28px,7vw,72px);font-weight:900;color:#fff;background:linear-gradient(#ff5a5a,#c40000);
+    border:8px solid #7a0000;border-radius:30px;cursor:pointer;text-transform:uppercase;
+    box-shadow:0 12px 0 #7a0000,0 20px 30px rgba(0,0,0,.35);animation:pulse 1s infinite alternate;z-index:50}
+  #start:active{transform:translateY(8px);box-shadow:0 4px 0 #7a0000}
+  @keyframes pulse{to{transform:scale(1.05)}}
+  .char{position:absolute;bottom:12%;width:110px;height:190px;z-index:5}
+  .char.fat{width:250px;height:300px}
+  .char svg{width:100%;height:100%;overflow:visible}
+  .name{position:absolute;bottom:-26px;width:100%;text-align:center;font-weight:900;font-size:18px;color:#222}
+  .bubble{position:absolute;bottom:105%;left:50%;transform:translateX(-50%);background:#fff;border:3px solid #222;
+    border-radius:16px;padding:8px 12px;font-size:16px;font-weight:700;width:max-content;max-width:260px;text-align:center;
+    display:none;z-index:20}
+  .bubble::after{content:"";position:absolute;top:100%;left:50%;margin-left:-8px;border:8px solid transparent;border-top-color:#222}
+  .flip{transform:scaleX(-1)}
+  .flip .bubble,.flip .name{transform:scaleX(-1)}
+  .flip .bubble{transform:translateX(50%) scaleX(-1)}
+  svg line,svg circle,svg ellipse{stroke:var(--c,#222);stroke-width:5;stroke-linecap:round;fill:none}
+  .head{fill:var(--h,#fff)!important}
+  #just svg{filter:drop-shadow(0 0 1.5px #5a4a2a)}
+  .body-fat{fill:var(--h)!important}
+  @keyframes quake{0%{transform:translate(0,0)}25%{transform:translate(-7px,6px)}50%{transform:translate(6px,-6px)}75%{transform:translate(-6px,-5px)}100%{transform:translate(5px,6px)}}
+  body.quake{animation:quake .1s infinite}
+  .run .legL{animation:swing .25s infinite alternate;transform-origin:40px 85px}
+  .run .legR{animation:swing .25s infinite alternate-reverse;transform-origin:40px 85px}
+  .run .armL{animation:swing .25s infinite alternate-reverse;transform-origin:40px 48px}
+  .run .armR{animation:swing .25s infinite alternate;transform-origin:40px 48px}
+  @keyframes swing{from{transform:rotate(-35deg)}to{transform:rotate(35deg)}}
+  .money{position:absolute;font-size:34px;z-index:10;pointer-events:none}
+  #mute{position:fixed;top:12px;left:12px;z-index:70;font-size:26px;width:52px;height:52px;border-radius:50%;border:4px solid #222;background:#fff;cursor:pointer}
+  #end{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;z-index:60}
+  #end h1{font-size:clamp(40px,10vw,100px);color:#222;text-shadow:3px 3px #fff}
+  #end button{font-size:24px;padding:12px 28px;border-radius:14px;border:4px solid #222;background:#ffd93b;cursor:pointer;font-weight:900}
+</style>
+</head>
+<body>
+<div id="park"><div id="sun"></div></div>
+<div id="ground"></div>
+<button id="start">Iniciar talento</button>
+
+<div id="dayron" class="char" style="left:18%;display:none"></div>
+<div id="just" class="char flip" style="left:72%;display:none"></div>
+<div id="josmel" class="char fat" style="left:-320px;display:none"></div>
+
+<button id="mute" title="Música">🔊</button>
+<div id="end"><h1>FIN</h1><button id="again">Repetir</button></div>
+
+<script>
+const chullo = `
+  <rect x="22" y="22" width="8" height="26" rx="3" style="fill:#d62828;stroke:#222;stroke-width:2"/>
+  <rect x="50" y="22" width="8" height="26" rx="3" style="fill:#d62828;stroke:#222;stroke-width:2"/>
+  <path d="M24 24 A16 16 0 0 1 56 24 Z" style="fill:#d62828;stroke:#222;stroke-width:2"/>
+  <path d="M26 17 L54 17" style="stroke:#ffd23f;stroke-width:3"/>
+  <path d="M24 22 L56 22" style="stroke:#2a9d8f;stroke-width:3"/>
+  <line x1="26" y1="48" x2="26" y2="56" style="stroke:#ffd23f;stroke-width:3"/>
+  <line x1="54" y1="48" x2="54" y2="56" style="stroke:#ffd23f;stroke-width:3"/>
+  <circle cx="40" cy="5" r="4" style="fill:#ffd23f;stroke:#222;stroke-width:2"/>`;
+const stick = (name, fat=false, hat='') => `
+<div class="bubble"></div>
+<svg viewBox="0 0 80 140">
+  ${fat
+    ? `<ellipse class="body-fat" cx="40" cy="78" rx="40" ry="46"/><circle class="head" cx="40" cy="22" r="17"/>
+       <circle cx="34" cy="20" r="2.5" style="fill:#fff;stroke:none"/><circle cx="46" cy="20" r="2.5" style="fill:#fff;stroke:none"/>`
+    : `<circle class="head" cx="40" cy="22" r="15"/><line x1="40" y1="37" x2="40" y2="88"/>`}
+  <g class="armL"><line x1="40" y1="50" x2="12" y2="78"/></g>
+  <g class="armR"><line x1="40" y1="50" x2="68" y2="78"/></g>
+  <g class="legL"><line x1="40" y1="88" x2="20" y2="135"/></g>
+  <g class="legR"><line x1="40" y1="88" x2="60" y2="135"/></g>
+  ${hat}
+</svg>
+<div class="name">${name}</div>`;
+
+const $ = id => document.getElementById(id);
+const dayron=$('dayron'), just=$('just'), josmel=$('josmel');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+function reset(){
+  dayron.innerHTML = stick('Dayron', false, chullo);
+  dayron.style.setProperty('--c','#7a4318'); dayron.style.setProperty('--h','#b8763a');
+  just.style.setProperty('--c','#e6d3a3'); just.style.setProperty('--h','#f7ecd0');
+  josmel.style.setProperty('--c','#3b200c'); josmel.style.setProperty('--h','#4a2a12');
+  just.innerHTML = stick('Just');
+  josmel.innerHTML = stick('Josmel', true);
+  Object.assign(dayron.style,{display:'none',left:'18%',transition:'none'});
+  Object.assign(just.style,{display:'none',left:'72%',transition:'none'});
+  Object.assign(josmel.style,{display:'none',left:'-320px',transition:'none'});
+  [dayron,just,josmel].forEach(c=>c.classList.remove('run'));
+  just.classList.add('flip'); dayron.classList.remove('flip'); josmel.classList.remove('flip');
+  $('end').style.display='none';
+}
+
+async function say(el, text, ms=2200){
+  const b = el.querySelector('.bubble');
+  b.textContent = text; b.style.display='block';
+  await sleep(ms);
+  b.style.display='none';
+}
+
+function throwMoney(from, to){
+  const f = from.getBoundingClientRect(), t = to.getBoundingClientRect();
+  const m = document.createElement('div');
+  m.className='money';
+  m.textContent = Math.random()<.5 ? '💵' : '💸';
+  m.style.left = f.left + f.width/2 + 'px';
+  m.style.top = f.top + 40 + 'px';
+  document.body.appendChild(m);
+  const dx = (t.left + t.width/2) - (f.left + f.width/2);
+  const dy = (Math.random()-.5)*60;
+  m.animate([
+    {transform:'translate(0,0) rotate(0deg)'},
+    {transform:`translate(${dx/2}px,${-90 + dy}px) rotate(180deg)`},
+    {transform:`translate(${dx}px,${dy}px) rotate(360deg)`}
+  ],{duration:700,easing:'ease-in-out'}).onfinish = () => m.remove();
+}
+
+async function show(){
+  reset();
+  $('start').style.display='none';
+  Music.start('park');
+  dayron.style.display = just.style.display = 'block';
+  await sleep(500);
+
+  await say(dayron, 'yo tengo mas dinero papeto');
+  await say(just, 'No, yo tengo mas dinero y un shark de 800gr BROOEERR', 3000);
+  await say(dayron, 'yo tengo luster dragon papeto y tengo llamas culonas', 3000);
+
+  // 5 segundos de lluvia de dinero
+  const start = Date.now();
+  let turn = false;
+  while (Date.now() - start < 5000){
+    turn ? throwMoney(just, dayron) : throwMoney(dayron, just);
+    turn = !turn;
+    await sleep(150);
+  }
+  await sleep(700);
+
+  // Entra Josmel
+  josmel.style.display='block';
+  josmel.classList.add('run');
+  void josmel.offsetWidth;
+  josmel.style.transition='left 2s linear';
+  josmel.style.left='2%';
+  await sleep(2000);
+  josmel.classList.remove('run');
+  await say(josmel, 'Ush marika los voy a acosar', 2200);
+
+  // Persecución
+  [dayron,just].forEach(c=>{ c.classList.remove('flip'); c.classList.add('run'); c.style.transition='left 3.5s ease-in'; c.style.left='115%'; });
+  josmel.classList.add('run');
+  josmel.style.transition='left 4.5s ease-in';
+  josmel.style.left='115%';
+  document.body.classList.add('quake');
+  Music.mode('chase');
+  say(josmel, 'NO CORRAN, LOS VOY A ALCANZAR', 3500);
+  await sleep(4800);
+  document.body.classList.remove('quake');
+
+  $('end').style.display='flex';
+  Music.stop();
+}
+
+
+
+// ===== Música (generada con Web Audio, sin archivos externos) =====
+const Music = (() => {
+  let ctx, master, timer, step = 0, next = 0, mode = 'park', muted = false;
+  const f = m => 440 * Math.pow(2, (m - 69) / 12);
+  const songs = {
+    park: { tempo: 112, wave: 'square',
+      mel: [72,76,79,76,72,76,79,84, 83,79,76,79,77,74,71,74, 72,76,79,76,72,76,79,84, 83,81,79,76,74,76,72,null],
+      bass: [48,48,55,55,53,53,55,55] },
+    chase: { tempo: 168, wave: 'sawtooth',
+      mel: [69,null,72,69,null,76,null,72, 69,null,72,69,null,77,null,76, 69,null,72,69,null,76,null,72, 71,null,74,71,null,79,null,77],
+      bass: [45,45,45,45,41,41,43,43] }
+  };
+  let noiseBuf;
+  function tone(freq, t, dur, type, vol){
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.02);
+  }
+  function kick(t){
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(40, t + 0.15);
+    g.gain.setValueAtTime(0.9, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.2);
+    o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.22);
+  }
+  function hat(t){
+    const s = ctx.createBufferSource(), g = ctx.createGain(), h = ctx.createBiquadFilter();
+    s.buffer = noiseBuf; h.type = 'highpass'; h.frequency.value = 7000;
+    g.gain.setValueAtTime(0.25, t); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+    s.connect(h); h.connect(g); g.connect(master); s.start(t); s.stop(t + 0.06);
+  }
+  function play(i, t){
+    const sg = songs[mode], eighth = 60 / sg.tempo / 2;
+    const n = sg.mel[i % 32];
+    if (n) tone(f(n), t, eighth * 1.6, sg.wave, mode === 'chase' ? 0.12 : 0.15);
+    if (i % 4 === 0) tone(f(sg.bass[(i / 4 | 0) % 8]), t, eighth * 3.5, 'triangle', 0.35);
+    if (mode === 'chase'){ if (i % 2 === 0) kick(t); hat(t + eighth / 2); }
+    else if (i % 2 === 1) hat(t);
+  }
+  function tick(){
+    while (next < ctx.currentTime + 0.2){
+      play(step, next);
+      next += 60 / songs[mode].tempo / 2;
+      step++;
+    }
+  }
+  return {
+    start(m = 'park'){
+      if (!ctx){
+        ctx = new (window.AudioContext || window.webkitAudioContext)();
+        master = ctx.createGain(); master.connect(ctx.destination);
+        noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 0.1, ctx.sampleRate);
+        const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      }
+      ctx.resume(); clearInterval(timer);
+      master.gain.cancelScheduledValues(ctx.currentTime);
+      master.gain.value = muted ? 0 : 0.28;
+      mode = m; step = 0; next = ctx.currentTime + 0.05;
+      timer = setInterval(tick, 50);
+    },
+    mode(m){ if (m !== mode){ mode = m; step = 0; } },
+    stop(){
+      if (!ctx) return;
+      master.gain.setTargetAtTime(0, ctx.currentTime, 0.3);
+      setTimeout(() => clearInterval(timer), 1200);
+    },
+    toggle(){
+      muted = !muted;
+      if (ctx) master.gain.value = muted ? 0 : 0.28;
+      return muted;
+    }
+  };
+})();
+$('mute').onclick = () => { $('mute').textContent = Music.toggle() ? '🔇' : '🔊'; };
+
+// ===== Parque =====
+(function buildPark(){
+  const park = $('park');
+  const add = (html) => park.insertAdjacentHTML('beforeend', html);
+  // nubes
+  [[8,70,0],[18,95,-30],[30,60,-55]].forEach(([top,w,delay],i)=>add(`<div class="cloud" style="top:${top}%;width:${w}px;animation-duration:${70+i*25}s;animation-delay:${delay}s"></div>`));
+  // colinas
+  add(`<div class="hill" style="left:-10%;width:60%;height:26%;background:#7dc96a"></div>`);
+  add(`<div class="hill" style="left:35%;width:80%;height:20%;background:#6fbd5c"></div>`);
+  // arboles
+  const treeSvg = (c1,c2) => `<svg viewBox="0 0 100 160"><rect x="44" y="88" width="12" height="72" rx="3" fill="#7b4a24"/><rect x="50" y="88" width="6" height="72" rx="3" fill="#6a3d1c"/>
+    <circle cx="28" cy="82" r="26" fill="${c1}"/><circle cx="72" cy="82" r="26" fill="${c1}"/><circle cx="50" cy="58" r="38" fill="${c1}"/><circle cx="50" cy="30" r="24" fill="${c1}"/>
+    <circle cx="40" cy="48" r="16" fill="${c2}" opacity=".8"/><circle cx="64" cy="70" r="12" fill="${c2}" opacity=".8"/><circle cx="26" cy="78" r="10" fill="${c2}" opacity=".8"/></svg>`;
+  [[2,170,'#2e8b3a','#43b04f'],[13,130,'#3a9a3f','#55c05c'],[30,150,'#2c8035','#43a84d'],[52,125,'#3a9a3f','#55c05c'],
+   [66,175,'#2e8b3a','#43b04f'],[82,140,'#2c8035','#43a84d'],[93,165,'#3a9a3f','#55c05c']]
+   .forEach(([l,h,a,b])=>add(`<div class="tree" style="left:${l}%;height:${h*1.4}px;width:${h*.875}px">${treeSvg(a,b)}</div>`));
+  // arbustos
+  [8,24,46,60,76,90].forEach((l,i)=>add(`<div class="bush" style="left:${l}%"><svg width="${70+i%3*15}" height="40" viewBox="0 0 70 40"><circle cx="18" cy="26" r="14" fill="#2f7d32"/><circle cx="36" cy="20" r="18" fill="#3a9a3f"/><circle cx="54" cy="27" r="13" fill="#2f7d32"/></svg></div>`));
+  // banca
+  add(`<div style="position:absolute;left:40%;bottom:19%"><svg width="110" height="60" viewBox="0 0 110 60"><rect x="6" y="6" width="98" height="9" rx="2" fill="#a0642a"/><rect x="6" y="20" width="98" height="9" rx="2" fill="#a0642a"/><rect x="4" y="33" width="102" height="10" rx="2" fill="#b87333"/><rect x="12" y="43" width="8" height="17" fill="#444"/><rect x="90" y="43" width="8" height="17" fill="#444"/></svg></div>`);
+  // camino
+  add(`<div class="path"></div>`);
+  // flores
+  const cols=['#ff5a8a','#ffd93b','#ffffff','#c86bff','#ff8a3b'];
+  for(let i=0;i<40;i++){
+    const low = i%2;
+    const bottom = low ? Math.random()*2.5 : 15.5+Math.random()*4;
+    add(`<div class="flower" style="left:${Math.random()*98}%;bottom:${bottom}%;background:${cols[i%cols.length]}"></div>`);
+  }
+})();
+
+$('start').onclick = show;
+$('again').onclick = () => { reset(); $('start').style.display='block'; };
+reset();
+</script>
+</body>
+</html>
